@@ -1,0 +1,77 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "Application stack",
+	"Parameters": {
+		"Service": {
+			"Description": "The name of the microservice",
+			"Type": "String",
+			"MinLength": 1
+		},
+		"DockercfgS3Bucket": {
+			"Description": "The S3 bucket containing the dockercfg file",
+			"Type": "String",
+			"MinLength": 1
+		},
+		"DockercfgS3Key": {
+			"Default": "/.dockercfg",
+			"Description": "The key to the dockercfg file for the specified bucket",
+			"Type": "String",
+			"MinLength": 1
+		}
+	},
+	"Resources": {
+		"app": {
+			"Type": "AWS::ElasticBeanstalk::Application",
+			"Properties": { "ApplicationName": { "Ref" : "Service" } }
+		},
+		"dockercfgRole": {
+			"Type": "AWS::IAM::Role",
+			"Properties": {
+				"AssumeRolePolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [ {
+						"Effect": "Allow",
+						"Principal": { "Service": [ "ec2.amazonaws.com" ] },
+						"Action": "sts:AssumeRole"
+					} ]
+				},
+				"Path": "/",
+				"Policies": [ {
+					"PolicyName": { "Ref": "Service" },
+					"PolicyDocument": {
+						"Version": "2012-10-17",
+						"Statement": [ {
+							"Effect": "Allow",
+							"Action": "s3:ListBucket",
+							"Resource": {
+								"Fn::Join": [
+									"",
+									[ "arn:aws:s3:::", { "Ref": "DockercfgS3Bucket" } ]
+								]
+							}
+						}, {
+							"Effect": "Allow",
+							"Action": "s3:GetObject",
+							"Resource": {
+								"Fn::Join": [
+									"",
+									[
+										"arn:aws:s3:::",
+										{ "Ref": "DockercfgS3Bucket" },
+										{ "Ref": "DockercfgS3Key" }
+									]
+								]
+							}
+						} ]
+					}
+				} ]
+			}
+		}
+	},
+	"Outputs": {
+		"DockercfgRole": {
+			"Description": "The role allowing access to .dockercfg",
+			"Value": { "Ref": "dockercfgRole" }
+		}
+	}
+}

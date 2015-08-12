@@ -1,0 +1,31 @@
+{
+  "name": "@microservice/micromanagement",
+  "version": "1.0.0",
+  "description": "manage your services",
+  "main": "index.js",
+  "bin": {
+    "microservice": "cli.js"
+  },
+  "scripts": {
+    "test": "jshint . && jscs ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/node-microservice/micromanagement"
+  },
+  "author": "Doug Moscrop <doug.moscrop@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "jscs": "^2.1.0",
+    "jshint": "^2.8.0"
+  },
+  "dependencies": {
+    "archiver": "^0.14.4",
+    "async": "^1.4.2",
+    "aws-sdk": "^2.1.36",
+    "jsonfile": "^2.2.1",
+    "rc": "^1.1.0",
+    "rfile": "^1.0.0",
+    "yargs": "^3.18.0"
+  }
+}
